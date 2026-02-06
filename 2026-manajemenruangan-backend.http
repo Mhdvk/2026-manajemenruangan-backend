@@ -1,0 +1,6 @@
+@_2026_manajemenruangan_backend_HostAddress = http://localhost:5153
+
+GET {{_2026_manajemenruangan_backend_HostAddress}}/weatherforecast/
+Accept: application/json
+
+###
