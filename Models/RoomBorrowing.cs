@@ -1,3 +1,5 @@
+
+
 namespace ManajemenRuangan.Api.Models;
 
 public class RoomBorrowing
@@ -9,5 +11,6 @@ public class RoomBorrowing
 
     public string BorrowerName { get; set; } = null!;
     public DateTime StartTime { get; set; }
+    public string Status{get; set;} = "pending";
     public DateTime EndTime { get; set; }
 }
