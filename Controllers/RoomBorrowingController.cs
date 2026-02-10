@@ -41,6 +41,35 @@ public class RoomBorrowingController : ControllerBase
         return Ok(data);
     }
 
+    [HttpGet("{id}")]
+    public async Task<IActionResult> GetById(int id)
+    {
+        var borrowing = await _context.RoomBorrowings
+            .Include(b => b.Room)
+            .Where(b => b.Id == id)
+            .Select(b => new RoomBorrowingResponseDto
+            {
+                Id = b.Id,
+                BorrowerName = b.BorrowerName,
+                StartTime = b.StartTime,
+                EndTime = b.EndTime,
+                Status = b.Status,
+                Room = new RoomSimpleDto
+                {
+                    Id = b.Room.Id,
+                    Name = b.Room.Name,
+                    Location = b.Room.Location
+                }
+            })
+            .FirstOrDefaultAsync();
+
+        if (borrowing == null)
+            return NotFound("Borrowing not found");
+
+        return Ok(borrowing);
+    }
+
+
     [HttpPost]
     public async Task<IActionResult> Create(CreateRoomBorrowingDto dto)
     {
