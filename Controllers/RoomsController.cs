@@ -1,10 +1,10 @@
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using ManajemenRuangan.Api.Data;
-using ManajemenRuangan.Api.Models;
 using ManajemenRuangan.Api.Dtos;
 
 namespace ManajemenRuangan.Api.Controllers;
+
 [ApiController]
 [Route("api/rooms")]
 public class RoomsController : ControllerBase
@@ -31,45 +31,25 @@ public class RoomsController : ControllerBase
 
         return Ok(rooms);
     }
+    
 
-    [HttpPost]
-    public async Task<IActionResult> Create(CreateRoomDto dto)
+    [HttpGet("{id}")]
+    public async Task<IActionResult> GetById(int id)
     {
-        var room = new Room
-        {
-            Name = dto.Name,
-            Location = dto.Location,
-            Capacity = dto.Capacity
-        };
+        var room = await _context.Rooms
+            .Where(r => r.Id == id)
+            .Select(r => new RoomResponseDto
+            {
+                Id = r.Id,
+                Name = r.Name,
+                Location = r.Location,
+                Capacity = r.Capacity
+            })
+            .FirstOrDefaultAsync();
 
-        _context.Rooms.Add(room);
-        await _context.SaveChangesAsync();
+        if (room == null)
+            return NotFound();
 
-        return Ok(room.Id);
-    }
-
-    [HttpPut("{id}")]
-    public async Task<IActionResult> Update(int id, UpdateRoomDto dto)
-    {
-        var room = await _context.Rooms.FindAsync(id);
-        if (room == null) return NotFound();
-
-        room.Name = dto.Name;
-        room.Location = dto.Location;
-        room.Capacity = dto.Capacity;
-
-        await _context.SaveChangesAsync();
-        return Ok();
-    }
-
-    [HttpDelete("{id}")]
-    public async Task<IActionResult> Delete(int id)
-    {
-        var room = await _context.Rooms.FindAsync(id);
-        if (room == null) return NotFound();
-
-        _context.Rooms.Remove(room);
-        await _context.SaveChangesAsync();
-        return NoContent();
+        return Ok(room);
     }
 }
