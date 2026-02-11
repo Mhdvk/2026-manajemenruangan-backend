@@ -29,6 +29,7 @@ public class RoomBorrowingController : ControllerBase
                 StartTime = b.StartTime,
                 EndTime = b.EndTime,
                 Status = b.Status,
+                Tujuan = b.Tujuan,
                 Room = new RoomSimpleDto
                 {
                     Id = b.Room.Id,
@@ -55,6 +56,7 @@ public async Task<IActionResult> GetById(int id)
             StartTime = b.StartTime,
             EndTime = b.EndTime,
             Status = b.Status,
+            Tujuan = b.Tujuan,
             Room = new RoomSimpleDto
             {
                 Id = b.Room.Id,
@@ -93,7 +95,8 @@ public async Task<IActionResult> GetById(int id)
             BorrowerName = dto.BorrowerName,
             StartTime = dto.StartTime,
             EndTime = dto.EndTime,
-            Status = "pending"
+            Status = "pending",
+            Tujuan = dto.Tujuan
         };
 
         _context.RoomBorrowings.Add(borrowing);
@@ -126,6 +129,7 @@ public async Task<IActionResult> GetById(int id)
         borrowing.BorrowerName = dto.BorrowerName;
         borrowing.StartTime = dto.StartTime;
         borrowing.EndTime = dto.EndTime;
+        borrowing.Tujuan = dto.Tujuan;
 
         await _context.SaveChangesAsync();
         return Ok();

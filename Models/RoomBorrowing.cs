@@ -13,4 +13,5 @@ public class RoomBorrowing
     public DateTime StartTime { get; set; }
     public string Status{get; set;} = "pending";
     public DateTime EndTime { get; set; }
+    public string? Tujuan { get; set; }
 }

@@ -15,4 +15,7 @@ public class CreateRoomBorrowingDto
 
     [Required]
     public DateTime EndTime { get; set; }
+
+    [Required]
+    public string? Tujuan { get; set; }
 }

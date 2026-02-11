@@ -18,4 +18,7 @@ public class UpdateRoomBorrowingDto
 
     [Required]
     public string Status { get; set; } = string.Empty;
+
+    [Required]
+    public string? Tujuan { get; set; }
 }
