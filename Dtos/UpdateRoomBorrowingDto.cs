@@ -17,8 +17,5 @@ public class UpdateRoomBorrowingDto
     public DateTime EndTime { get; set; }
 
     [Required]
-    public string Status { get; set; } = string.Empty;
-
-    [Required]
     public string? Tujuan { get; set; }
 }
