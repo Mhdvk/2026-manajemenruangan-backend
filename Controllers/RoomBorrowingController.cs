@@ -103,16 +103,24 @@ public class RoomBorrowingController : ControllerBase
 
         return Ok(borrowing.Id);
     }
+[HttpPut("{id}")]
+public async Task<IActionResult> Update(int id, UpdateRoomBorrowingDto dto)
+{
+    if (dto.EndTime <= dto.StartTime)
+        return BadRequest("Waktu selesai peminjaman harus lebih akhir dari waktu mulai peminjaman");
 
-    [HttpPut("{id}")]
-    public async Task<IActionResult> Update(int id, UpdateRoomBorrowingDto dto)
+    var borrowing = await _context.RoomBorrowings.FindAsync(id);
+    if (borrowing == null) return NotFound();
+
+    var isTimeChanged =
+        borrowing.StartTime != dto.StartTime ||
+        borrowing.EndTime != dto.EndTime;
+
+    var isRoomChanged =
+        borrowing.RoomId != dto.RoomId;
+
+    if (isTimeChanged || isRoomChanged)
     {
-        if (dto.EndTime <= dto.StartTime)
-            return BadRequest("Waktu selesai peminjaman harus lebih akhir dari waktu mulai peminjaman");
-
-        var borrowing = await _context.RoomBorrowings.FindAsync(id);
-        if (borrowing == null) return NotFound();
-
         var conflict = await _context.RoomBorrowings.AnyAsync(b =>
             b.Id != id &&
             b.RoomId == dto.RoomId &&
@@ -124,15 +132,19 @@ public class RoomBorrowingController : ControllerBase
         if (conflict)
             return BadRequest("Ruangan sudah ada yang meminjam");
 
-        borrowing.RoomId = dto.RoomId;
-        borrowing.BorrowerName = dto.BorrowerName;
-        borrowing.StartTime = dto.StartTime;
-        borrowing.EndTime = dto.EndTime;
-        borrowing.Tujuan = dto.Tujuan;
-
-        await _context.SaveChangesAsync();
-        return Ok();
+        borrowing.Status = BorrowingStatus.Pending;
     }
+
+    borrowing.RoomId = dto.RoomId;
+    borrowing.BorrowerName = dto.BorrowerName;
+    borrowing.StartTime = dto.StartTime;
+    borrowing.EndTime = dto.EndTime;
+    borrowing.Tujuan = dto.Tujuan;
+
+    await _context.SaveChangesAsync();
+    return Ok();
+}
+
 
     [HttpPatch("{id}/approve")]
     public async Task<IActionResult> Approve(int id)
